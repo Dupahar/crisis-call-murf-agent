@@ -49,8 +49,8 @@ It is a low-cost, high-impact solution to a global training deficit.
 
 1.  **Clone & Install**:
     ```bash
-    git clone <your-repo-link>
-    cd crisis-call
+    git clone https://github.com/Dupahar/crisis-call-murf-agent.git
+    cd crisis-call-murf-agent
     npm install
     ```
 
