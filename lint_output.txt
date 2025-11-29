@@ -1,0 +1,18 @@
+
+> murf-voice-agent@0.1.0 lint
+> eslint
+
+
+C:\Users\mahaj\Downloads\IIT_BOMBAY\murf-voice-agent\components\VoiceAgent.tsx
+   3:28  warning  'useEffect' is defined but never used                 @typescript-eslint/no-unused-vars
+   4:15  warning  'MicOff' is defined but never used                    @typescript-eslint/no-unused-vars
+   4:23  warning  'Play' is defined but never used                      @typescript-eslint/no-unused-vars
+   6:36  warning  'LiveSchema' is defined but never used                @typescript-eslint/no-unused-vars
+  13:12  warning  'response' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  18:11  warning  'audioContextRef' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\mahaj\Downloads\IIT_BOMBAY\murf-voice-agent\lib\openai.ts
+  7:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 7 problems (1 error, 6 warnings)
+
