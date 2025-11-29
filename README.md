@@ -2,8 +2,7 @@
 
 > **"We don't just simulate calls. We measure Grace Under Pressure."**
 
-![CrisisCall Banner](https://via.placeholder.com/1200x600?text=CrisisCall+Dashboard+Screenshot)
-*(Replace this link with a screenshot of your Dispatch Console in "Red/Panic" mode)*
+
 
 **CrisisCall** is a browser-based **Stress Inoculation Platform** designed to train emergency dispatchers, suicide prevention volunteers, and high-stakes corporate teams. By replacing expensive human actors with hyper-realistic, latency-responsive AI agents, we democratize resilience training.
 
