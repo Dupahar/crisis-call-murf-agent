@@ -68,6 +68,9 @@ In a crisis, silence creates panic. Standard TTS engines introduce a 2-second "r
 ---
 
 ## 🎥 Simulation Walkthrough
+
+[![Watch the Demo](https://img.youtube.com/vi/HRI_LUFV7rE/0.jpg)](https://youtu.be/HRI_LUFV7rE)
+
 To test the "Panic Mode" yourself:
 
 1.  Click **"Connect to Emergency Channel"**.
