@@ -1,0 +1,28 @@
+Sending message...
+Gemini Raw Response: {
+  "candidates": [
+    {
+      "content": {
+        "role": "model"
+      },
+      "finishReason": "MAX_TOKENS",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 454,
+    "totalTokenCount": 513,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 454
+      }
+    ],
+    "thoughtsTokenCount": 59
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "m-YyaZPNNPXMg8UP0I3v2A0"
+}
+Finish Reason: MAX_TOKENS
+Safety Ratings: undefined
+Generated Text: 

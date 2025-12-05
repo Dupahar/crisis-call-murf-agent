@@ -24,8 +24,7 @@ export async function GET() {
         return NextResponse.json({ key: result.key });
     } catch (error) {
         console.error("Deepgram Token Error:", error);
-        // Fallback: if project ID logic fails (common in simple setups), just return the env key (NOT SECURE for prod, but ok for hackathon prototype if needed, though we should avoid it)
-        // Better: Proxy the audio stream. But for now, let's try to return a key.
-        return NextResponse.json({ error: "Failed to generate token" }, { status: 500 });
+        // Fallback: return the env key directly (Hackathon mode)
+        return NextResponse.json({ key: process.env.DEEPGRAM_API_KEY });
     }
 }

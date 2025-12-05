@@ -1,0 +1,34 @@
+Sending message...
+Gemini Raw Response: {
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "HELLO?! Arre, what took you so long?! Oberoi Heights, Worli... there's a fire! I'm stuck, I can't breathe... oh god, please help me! I'M DYING HERE!"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 454,
+    "candidatesTokenCount": 49,
+    "totalTokenCount": 692,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 454
+      }
+    ],
+    "thoughtsTokenCount": 189
+  },
+  "modelVersion": "gemini-2.5-flash",
+  "responseId": "IOcyaa3tHIfYjuMPpta9iAE"
+}
+Finish Reason: STOP
+Safety Ratings: undefined
+Generated Text: HELLO?! Arre, what took you so long?! Oberoi Heights, Worli... there's a fire! I'm stuck, I can't breathe... oh god, please help me! I'M DYING HERE!

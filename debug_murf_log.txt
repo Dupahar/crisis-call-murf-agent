@@ -1,0 +1,16 @@
+Sending request to Murf...
+Response Status: 200
+Response Headers: {
+  "access-control-allow-credentials": "true",
+  "access-control-allow-headers": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS, HEAD",
+  "access-control-allow-origin": "*",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "date": "Fri, 05 Dec 2025 14:24:23 GMT",
+  "timing-allow-origin": "*",
+  "transfer-encoding": "chunked"
+}
+Response Buffer Size: 1673
+Saved output to debug_murf_output.mp3
+First 100 bytes as text: {"audioFile":"https://murf.ai/user-upload/one-day-temp/32fca098-b32c-4372-8746-29594d816416.mp3?resp

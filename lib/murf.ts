@@ -7,9 +7,8 @@ export interface MurfVoiceOptions {
 
 export async function generateSpeech(text: string, options: MurfVoiceOptions) {
   const apiKey = process.env.MURF_API_KEY;
-  const apiSecret = process.env.MURF_API_SECRET;
 
-  if (!apiKey || !apiSecret) {
+  if (!apiKey) {
     throw new Error("Murf API credentials not configured");
   }
 
@@ -18,12 +17,11 @@ export async function generateSpeech(text: string, options: MurfVoiceOptions) {
     headers: {
       "Content-Type": "application/json",
       "api-key": apiKey,
-      "api-secret": apiSecret,
     },
     body: JSON.stringify({
-      voiceId: options.voiceId || "en-US-falcon", // Default to Falcon if not specified
+      voiceId: options.voiceId || "en-IN-isha", // Default to Isha (Indian English)
       text: text,
-      style: options.style || "Angry", // "Angry" often sounds more urgent/loud in TTS models if "Terrified" isn't available
+      style: options.style || "Conversational", // Fallback to Conversational
       rate: options.rate || 20, // +20% speed for urgency
       pitch: options.pitch || 0,
       format: "MP3",
@@ -36,5 +34,15 @@ export async function generateSpeech(text: string, options: MurfVoiceOptions) {
     throw new Error(`Murf API Error: ${JSON.stringify(error)}`);
   }
 
-  return response.arrayBuffer();
+  const data = await response.json();
+  if (!data.audioFile) {
+    throw new Error("Murf API response missing audioFile URL");
+  }
+
+  const audioResponse = await fetch(data.audioFile);
+  if (!audioResponse.ok) {
+    throw new Error(`Failed to fetch audio from URL: ${data.audioFile}`);
+  }
+
+  return audioResponse.arrayBuffer();
 }

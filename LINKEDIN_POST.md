@@ -25,7 +25,7 @@ Check out the demo below. Would you crack under pressure? 👇
 
 🛠 TECH STACK:
 🎤 @Deepgram (Nova-2 ASR)
-🧠 OpenAI (GPT-4o-mini)
+🧠 Google Gemini (2.5 Flash)
 🗣 @Murf AI (Falcon TTS)
 💻 Next.js 14
 

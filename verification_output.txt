@@ -1,0 +1,12 @@
+
+--- Verifying Murf AI ---
+Testing Murf API with key only...
+Γ¥î Murf API check failed: Murf API Error: {"errorCode":400,"errorMessage":"Invalid voice_id en-US-falcon. Use the GET /v1/speech/voices endpoint to retrieve the full list of supported voices, or visit: https://murf.ai/api/docs/voices-styles/voice-library, to view the voice library in our API docs."}
+
+--- Verifying Gemini Pro ---
+Testing Gemini API...
+Γ¥î Gemini API check failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent: [404 Not Found] models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+
+--- Verifying Deepgram ---
+Testing Deepgram API...
+ΓÜá∩╕Å Deepgram Project ID missing, skipping deep validation.

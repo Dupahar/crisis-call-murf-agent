@@ -19,6 +19,22 @@ export default function VoiceAgent() {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const deepgramConnectionRef = useRef<LiveClient | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Race Condition & Debounce Refs
+    const processingIdRef = useRef<number>(0);
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const transcriptBufferRef = useRef<string>("");
+
+    const stopAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            URL.revokeObjectURL(audioRef.current.src);
+            audioRef.current = null;
+        }
+        setIsSpeaking(false);
+    };
 
     useEffect(() => {
         if (callStatus === "ACTIVE") {
@@ -77,9 +93,24 @@ export default function VoiceAgent() {
 
             connection.on(LiveTranscriptionEvents.Transcript, (data) => {
                 const sentence = data.channel.alternatives[0].transcript;
-                if (sentence && data.is_final) {
+                if (sentence && data.is_final && sentence.trim().length > 0) {
+                    stopAudio(); // Stop AI speech immediately
+
+                    // Debounce Logic
+                    transcriptBufferRef.current += " " + sentence;
                     setTranscript((prev) => prev + " " + sentence);
-                    handleConversation(sentence);
+
+                    if (debounceTimerRef.current) {
+                        clearTimeout(debounceTimerRef.current);
+                    }
+
+                    debounceTimerRef.current = setTimeout(() => {
+                        const fullText = transcriptBufferRef.current.trim();
+                        if (fullText) {
+                            handleConversation(fullText);
+                            transcriptBufferRef.current = ""; // Clear buffer
+                        }
+                    }, 500); // 500ms debounce
                 }
             });
 
@@ -106,6 +137,9 @@ export default function VoiceAgent() {
     const handleConversation = async (text: string) => {
         if (!text.trim()) return;
 
+        // Increment ID to invalidate previous requests
+        const currentId = ++processingIdRef.current;
+
         const now = Date.now();
         const latencyMs = now - lastResponseTime;
         const latencySec = (latencyMs / 1000).toFixed(1);
@@ -115,13 +149,19 @@ export default function VoiceAgent() {
         let messageContent = `${text} [User response time: ${latencySec}s]`;
         let panicMode = false;
 
-        if (latencyMs > 4000) {
-            messageContent += " [SYSTEM NOTE: The dispatcher hesitated. PANIC and SCREAM!]";
+        if (latencyMs > 8000) {
+            messageContent += " [SYSTEM NOTE: The dispatcher hesitated. Express extreme distress!]";
             panicMode = true;
         }
         setIsPanic(panicMode);
 
         const newMessages = [...messages, { role: "user", content: messageContent }];
+
+        // Hide system note from UI by filtering it out for display
+        // Note: We are storing the full message in state for API context, 
+        // but we can clean it up in the render loop or just accept it for now.
+        // Given the user complaint, let's try to clean the display content in the render loop instead.
+        // But for now, let's focus on the TTS and Latency.
 
         setMessages(newMessages);
         setTranscript("");
@@ -131,17 +171,34 @@ export default function VoiceAgent() {
                 method: "POST",
                 body: JSON.stringify({ messages: newMessages }),
             });
+
+            // Race Condition Check 1
+            if (processingIdRef.current !== currentId) {
+                console.log("Request cancelled due to new input");
+                return;
+            }
+
             const chatData = await chatRes.json();
             const aiText = chatData.response;
 
-            setMessages((prev) => [...prev, { role: "assistant", content: aiText }]);
+            if (!aiText || !aiText.trim()) {
+                console.warn("Received empty response from Gemini, skipping TTS.");
+                setMessages((prev) => [...prev, { role: "assistant", content: "[SIGNAL LOST - NO AUDIO]" }]);
+                setIsProcessing(false);
+                return;
+            }
+
+            // Clean text for TTS (Remove actions like [coughing], (gasping))
+            const cleanAiText = aiText.replace(/\[.*?\]/g, "").replace(/\(.*?\)/g, "").trim();
 
             // Dynamic Voice Parameters based on Panic
+            // TUNED: Aggressive rate/pitch for Indian voice to simulate panic
             const ttsBody = {
-                text: aiText,
-                style: panicMode ? "Terrified" : "Angry",
-                rate: panicMode ? 30 : 10,
-                pitch: panicMode ? 10 : 0,
+                text: cleanAiText,
+                voiceId: "en-IN-isha",
+                style: "Conversational",
+                rate: panicMode ? 40 : 10, // Increased from 30 to 40
+                pitch: panicMode ? 20 : 0, // Increased from 10 to 20
             };
 
             const ttsRes = await fetch("/api/text-to-speech", {
@@ -149,22 +206,71 @@ export default function VoiceAgent() {
                 body: JSON.stringify(ttsBody),
             });
 
+            // Race Condition Check 2
+            if (processingIdRef.current !== currentId) {
+                console.log("TTS cancelled due to new input");
+                return;
+            }
+
+            if (!ttsRes.ok) {
+                throw new Error(`TTS API Error: ${ttsRes.statusText}`);
+            }
+
             const audioBlob = await ttsRes.blob();
+            console.log(`Received Audio Blob: Size=${audioBlob.size}, Type=${audioBlob.type}`);
+
+            if (audioBlob.size === 0) {
+                throw new Error("Received empty audio blob");
+            }
+
             const audioUrl = URL.createObjectURL(audioBlob);
             const audio = new Audio(audioUrl);
+            audioRef.current = audio;
 
-            setIsSpeaking(true);
-            audio.play();
             audio.onended = () => {
-                setIsSpeaking(false);
-                setIsPanic(false);
-                setLastResponseTime(Date.now());
+                // Only update state if we are still the active request
+                if (processingIdRef.current === currentId) {
+                    setIsSpeaking(false);
+                    setIsPanic(false);
+                    setLastResponseTime(Date.now());
+                }
+                URL.revokeObjectURL(audioUrl); // Clean up
+                if (audioRef.current === audio) {
+                    audioRef.current = null;
+                }
             };
+
+            audio.onerror = (e) => {
+                console.error("Audio Playback Error:", e);
+                setIsSpeaking(false);
+                URL.revokeObjectURL(audioUrl);
+                if (audioRef.current === audio) {
+                    audioRef.current = null;
+                }
+            };
+
+            try {
+                // Final Race Condition Check before playing
+                if (processingIdRef.current !== currentId) {
+                    return;
+                }
+
+                await audio.play();
+                // SYNC FIX: Only show the message when audio starts playing
+                setMessages((prev) => [...prev, { role: "assistant", content: aiText }]);
+                setIsSpeaking(true);
+            } catch (playError) {
+                console.error("Audio play() failed:", playError);
+                setIsSpeaking(false);
+            }
 
         } catch (error) {
             console.error("Conversation error:", error);
         } finally {
-            setIsProcessing(false);
+            // Only turn off processing if we are the active request
+            if (processingIdRef.current === currentId) {
+                setIsProcessing(false);
+            }
         }
     };
 
@@ -245,7 +351,7 @@ export default function VoiceAgent() {
                                         ? 'border-green-700 bg-green-900/10 text-green-100'
                                         : 'border-red-900 bg-red-900/10 text-red-100'
                                         }`}>
-                                        {msg.content}
+                                        {msg.content.replace(/\[SYSTEM NOTE:.*?\]/g, "")}
                                     </div>
                                 </div>
                             ))}

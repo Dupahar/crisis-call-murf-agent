@@ -1,0 +1,10 @@
+
+--- Verifying Murf AI ---
+Listing Murf Voices...
+Γ£à Murf API check passed. Found 162 voices.
+   Example voice: en-US-alina (Alina (F))
+
+--- Verifying Gemini Pro ---
+Listing Gemini Models...
+Testing with model: gemini-1.5-flash...
+Γ¥î Gemini API check failed: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent: [404 Not Found] models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
