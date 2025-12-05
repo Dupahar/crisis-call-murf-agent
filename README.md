@@ -2,10 +2,10 @@
 
 > **"We don't just simulate calls. We measure Grace Under Pressure."**
 
-![CrisisCall UI](/brain/2e5b5248-25a0-4834-8894-72b1e017e0d1/crisis_call_ui_1764949662072.png)
+![CrisisCall UI](./docs/images/crisis_call_ui.png)
 
 ### 👨‍💼 Operator Dashboard (Active Call)
-![Operator Dashboard](/brain/2e5b5248-25a0-4834-8894-72b1e017e0d1/uploaded_image_1764948476248.png)
+![Operator Dashboard](./docs/images/operator_dashboard.png)
 
 ---
 
